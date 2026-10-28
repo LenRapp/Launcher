@@ -38,3 +38,10 @@ pub struct DownloadProgressPayload {
     pub speed_bytes_per_sec: u64,
     pub error_message: Option<String>,
 }
+
+// Payload de l'événement "game-session-ended" (Page 4 du PDF)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GameSessionEndedPayload {
+    pub game_id: String,
+    pub playtime_seconds: u64,
+}

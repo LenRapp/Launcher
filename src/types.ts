@@ -26,3 +26,15 @@ export interface DownloadProgressPayload {
     speed_bytes_per_sec: number;
     error_message: string | null;
 }
+
+export interface GameSessionEndedPayload {
+    game_id: string;
+    playtime_seconds: number;
+}
+
+// Noms exacts des 3 événements Tauri (pour éviter les fautes de frappe)
+export const EVENTS = {
+    DOWNLOAD_PROGRESS: "download-progress",
+    NETWORK_STATUS_CHANGED: "network-status-changed",
+    GAME_SESSION_ENDED: "game-session-ended",
+} as const;
