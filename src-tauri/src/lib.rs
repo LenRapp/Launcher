@@ -42,11 +42,11 @@ fn set_game_executable(game_id: String, exe_path: String) -> Result<(), String> 
     Ok(()) // Dev 2 branchera db::set_game_executable() ici (DEV2-01)
 }
 
-#[tauri::command]
-fn add_manual_game(title: String, exe_path: String) -> Result<Game, String> {
-    let _ = (title, exe_path);
-    Err("Non implémenté (DEV2-10)".to_string()) // Dev 2 branchera runner::utils::add_manual_game() ici
-}
+    #[tauri::command]
+    fn add_manual_game(title: String, exe_path: String) -> Result<Game, String> {
+        let _ = (title, exe_path);
+        Err("Non implémenté (DEV2-10)".to_string()) // Dev 2 branchera runner::utils::add_manual_game() ici
+    }
 
 #[tauri::command]
 fn open_game_folder(game_id: String) -> Result<(), String> {
@@ -71,7 +71,7 @@ fn set_setting(key: String, value: String) -> Result<(), String> {
 
 #[tauri::command]
 async fn get_network_status() -> Result<bool, String> {
-    Ok(true) // Dev 3 branchera cloud::network::get_network_status() ici (DEV3-01)
+    cloud::network::get_network_status().await
 }
 
 #[tauri::command]
@@ -99,6 +99,12 @@ async fn connect_google_drive() -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            // .clone() sur AppHandle est justifié car il doit être déplacé ("moved") dans la tâche asynchrone
+            // tout en laissant `app` disponible pour la suite du setup. (Cloner un AppHandle est très léger : c'est un pointeur interne).
+            cloud::network::start_network_monitor(app.handle().clone());
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             // Dev 2
             get_all_games,
